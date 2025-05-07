@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Exit on error.
+set -e
+
+# Get our working directory, since it will be random.
+HERE="$(readlink -f "$(dirname "$0")")"
+
+# Set up PATH environment variable to prefer executables from AppImage.
+export PATH="${HERE}/usr/bin:${PATH}"
+
+# Run a custom executable if specified. Otherwise launch the default.
+if test ! -z "${APPIMAGE_EXE}"; then
+  if test -x "${HERE}/usr/bin/${APPIMAGE_EXE}"; then
+    exec "${HERE}/usr/bin/${APPIMAGE_EXE}" "$@"
+  else
+    echo "ERROR: ${APPIMAGE_EXE} not found in AppImage." >&2
+    exit 1
+  fi
+else
+  exec "${HERE}/usr/bin/qemu-system-x86_64" "$@"
+fi
