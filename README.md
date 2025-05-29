@@ -69,7 +69,7 @@ the graphical user interface of virt-manager:
 Command-line arguments can be passed directory to the AppImage, and they will
 be forwarded on to the program that runs from within the AppImage. For example:
 ```
-./qemu-X.Y.Z-x86_64.AppImage -m 4096 -hda example.img
+./qemu-X.Y.Z-x86_64.AppImage -enable-kvm -m 4G -smp 2 -vga qxl -hda example.qcow2 -cdrom livecd.iso
 ```
 
 To instead launch a different program within the AppImage, you can make use of
@@ -79,10 +79,10 @@ convert a raw disk image to QEMU's QCOW2 format:
 APPIMAGE_EXE=qemu-img ./qemu-X.Y.Z-x86_64.AppImage convert -f raw -O qcow2 example.img example.qcow2
 ```
 
-To see the full list of executables in the AppImage, run the AppImage as
-follows:
+To see the full list of executables in the AppImage, set `APPIMAGE_EXE` to
+`list`, as follows:
 ```
-./qemu-X.Y.Z-x86_64.AppImage --appimage-list-executables
+APPIMAGE_EXE=list ./qemu-X.Y.Z-x86_64.AppImage
 ```
 
 # Building

@@ -7,7 +7,7 @@ WORKDIR /work
 
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
-ARG VER_QEMU=10.0.0
+ARG VER_QEMU=10.0.2
 
 # Specify the name of the final AppImage.
 ENV LDAI_OUTPUT="qemu-${VER_QEMU}-x86_64.AppImage"
@@ -78,7 +78,9 @@ RUN apt-get update && apt-get -y install \
 RUN pip3 install meson==1.5.0 pycotap==1.2.0 tomli==2.1.0
 
 # Download and extract the source.
-RUN curl -fLO "https://download.qemu.org/qemu-${VER_QEMU}.tar.xz" && \
+# Retry liberally to prevent a GitHub workflow fail if the server is buggy.
+RUN curl --retry 10 --retry-delay 3 -fLO \
+    "https://download.qemu.org/qemu-${VER_QEMU}.tar.xz" && \
     mkdir -p src pkg && \
     tar -xf "qemu-${VER_QEMU}.tar.xz" -C src --strip-components=1
 
@@ -252,7 +254,6 @@ COPY AppRun ./pkg/
 
 # Download and run linuxdeploy to build the AppImage.
 RUN cd pkg && \
-    chmod 755 AppRun && \
     curl -fLO https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage && \
     curl -fLO https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh && \
     chmod 755 linuxdeploy-x86_64.AppImage linuxdeploy-plugin-gtk.sh && \
