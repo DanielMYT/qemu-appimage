@@ -7,7 +7,7 @@ WORKDIR /work
 
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
-ARG VER_QEMU=10.1.0-rc0
+ARG VER_QEMU=10.1.0-rc2
 
 # Specify the name of the final AppImage.
 ENV LDAI_OUTPUT="qemu-${VER_QEMU}-x86_64.AppImage"
