@@ -7,7 +7,9 @@ WORKDIR /work
 
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
-ARG VER_QEMU=10.1.0-rc2
+# Make sure the SHA256 checksum is set correctly for the .tar.bz2 tarball.
+ARG VER_QEMU=10.1.0-rc3
+ARG SUM_QEMU=6b509c812bb25dce03dfe4a4316a16dc533eeb985262549dac85ef0d029022c4
 
 # Specify the name of the final AppImage.
 ENV LDAI_OUTPUT="qemu-${VER_QEMU}-x86_64.AppImage"
@@ -78,11 +80,13 @@ RUN apt-get update && apt-get -y install \
 RUN pip3 install meson==1.5.0 pycotap==1.2.0 tomli==2.1.0
 
 # Download and extract the source.
+# Use .tar.bz2 archive instead of .tar.xz due to historical bugs.
 # Retry liberally to prevent a GitHub workflow fail if the server is buggy.
 RUN curl --retry 10 --retry-delay 3 -fLO \
-    "https://download.qemu.org/qemu-${VER_QEMU}.tar.xz" && \
+    "https://download.qemu.org/qemu-${VER_QEMU}.tar.bz2" && \
+    echo "${SUM_QEMU} qemu-${VER_QEMU}.tar.bz2" | sha256sum -c && \
     mkdir -p src pkg && \
-    tar -xf "qemu-${VER_QEMU}.tar.xz" -C src --strip-components=1
+    tar -xf "qemu-${VER_QEMU}.tar.bz2" -C src --strip-components=1
 
 # Compile QEMU and install it to the staging directory.
 RUN cd src && ./configure \
