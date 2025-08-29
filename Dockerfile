@@ -8,8 +8,8 @@ WORKDIR /work
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
 # Make sure the SHA256 checksum is set correctly for the .tar.bz2 tarball.
-ARG VER_QEMU=10.1.0-rc4
-ARG SUM_QEMU=f741a7c180c79748f6ae95601a0187459bcb51db3695b2ec2c2eb80a68737a1e
+ARG VER_QEMU=10.1.0
+ARG SUM_QEMU=33a0a6b5329e3d603ccf6209a2a521a4e4946f2664bd8137b25d9fcc5a8ab12d
 
 # Specify the name of the final AppImage.
 ENV LDAI_OUTPUT="qemu-${VER_QEMU}-x86_64.AppImage"
