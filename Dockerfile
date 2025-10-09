@@ -8,11 +8,14 @@ WORKDIR /work
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
 # Make sure the SHA256 checksum is set correctly for the .tar.bz2 tarball.
-ARG VER_QEMU=10.1.0
-ARG SUM_QEMU=33a0a6b5329e3d603ccf6209a2a521a4e4946f2664bd8137b25d9fcc5a8ab12d
+ARG VER_QEMU=10.1.1
+ARG SUM_QEMU=50ad8a9e99d4760c824638b577b70889686d365e35b8087f489d8edf17eb5559
 
-# Specify the name of the final AppImage.
-ENV LDAI_OUTPUT="qemu-${VER_QEMU}-x86_64.AppImage"
+# Only x86_64 and aarch64 are currently supported.
+# We have no plans to support 32-bit architectures.
+# If you want to try anyway (at your own risk), simply remove this check.
+RUN test "$(uname -m)" = "x86_64" || test "$(uname -m)" = "aarch64" || \
+    { echo "Error: QEMU AppImage does not support $(uname -m)." >&2; false; }
 
 # Prevent apt-get from showing interactive prompts even with -y.
 ENV DEBIAN_FRONTEND=noninteractive
@@ -77,7 +80,7 @@ RUN apt-get update && apt-get -y install \
 
 # Install additional dependencies from PIP.
 # These are either missing from APT/DPKG, or the APT/DPKG version is too old.
-RUN pip3 install meson==1.5.0 pycotap==1.2.0 tomli==2.1.0
+RUN pip3 install meson==1.9.1 pycotap==1.3.1 tomli==2.2.1
 
 # Download and extract the source.
 # Use .tar.bz2 archive instead of .tar.xz due to historical bugs.
@@ -255,11 +258,11 @@ RUN find pkg/AppDir/usr/bin -type f \
 COPY AppRun ./pkg/
 
 # Download and run linuxdeploy to build the AppImage.
-RUN cd pkg && \
-    curl -fLO https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage && \
-    curl -fLO https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh && \
-    chmod 755 linuxdeploy-x86_64.AppImage linuxdeploy-plugin-gtk.sh && \
-    ./linuxdeploy-x86_64.AppImage --appimage-extract && \
+RUN export LDAI_OUTPUT="qemu-${VER_QEMU}-$(uname -m).AppImage" && cd pkg && \
+    curl -fLO "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-$(uname -m).AppImage" && \
+    curl -fLO "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh" && \
+    chmod 755 "linuxdeploy-$(uname -m).AppImage" linuxdeploy-plugin-gtk.sh && \
+    "./linuxdeploy-$(uname -m).AppImage" --appimage-extract && \
     squashfs-root/usr/bin/linuxdeploy \
     --appdir AppDir \
     --custom-apprun AppRun \

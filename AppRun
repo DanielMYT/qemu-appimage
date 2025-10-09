@@ -22,6 +22,7 @@ if test ! -z "${APPIMAGE_EXE}"; then
   fi
 else
   # No custom program was set, so default to 'qemu-system-x86_64'.
+  # It is expected behaviour for this to be the default even on non-x86_64.
   EXE="${HERE}/usr/bin/qemu-system-x86_64"
 fi
 

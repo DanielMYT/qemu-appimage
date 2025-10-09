@@ -10,6 +10,9 @@ QEMU on almost any GNU/Linux distribution. It is particularly useful for
 distributions that don't provide native packages in their repositories, or for
 ones that provide an unacceptably outdated version. This is because there are
 very few, if any, official generic binaries of QEMU available on the internet.
+Builds of the AppImage are provided for x86_64 and aarch64; other architectures
+(including 32-bit architectures) are unsupported and no support is planned for
+them.
 
 It should be noted that this project is **UNOFFICIAL**, and is not affiliated
 with or endorsed by the developers of QEMU in any way. As such, all bugs and
@@ -61,7 +64,7 @@ chmod +x qemu-X.Y.Z-x86_64.AppImage
 ```
 
 Now you can launch the AppImage as an executable, which will by default launch
-the graphical user interface of virt-manager:
+`qemu-system-x86_64` (regardless of your host system's architecture):
 ```
 ./qemu-X.Y.Z-x86_64.AppImage
 ```
@@ -110,4 +113,11 @@ packages are allowed to write to. You can then move the directory back to your
 current directory with the following command (may need to be run as root):
 ```
 mv /tmp/snap-private-tmp/snap.docker/tmp/artifact .
+```
+
+**NOTE:** The Docker build cache remains on your system even after a build is
+completed. This can waste disk space, especially if you build multiple times.
+To cleanup this cache, run the following command (answering `y` when prompted).
+```
+docker system prune
 ```
