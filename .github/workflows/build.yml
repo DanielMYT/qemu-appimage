@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: Set up Docker for building x86_64 artifact
         uses: docker/setup-buildx-action@v3
@@ -27,13 +27,14 @@ jobs:
         with:
           name: x86_64.tar
           path: x86_64.tar
+          retention-days: 1
 
   buildarm:
     runs-on: ubuntu-24.04-arm
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: Set up Docker for building aarch64 artifact
         uses: docker/setup-buildx-action@v3
@@ -48,6 +49,7 @@ jobs:
         with:
           name: aarch64.tar
           path: aarch64.tar
+          retention-days: 1
 
   release:
     runs-on: ubuntu-latest
@@ -81,3 +83,11 @@ jobs:
           files: artifact/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clean up artifact cache after release
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: |
+            x86_64.tar
+            aarch64.tar
+          failOnError: false
