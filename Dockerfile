@@ -7,9 +7,9 @@ WORKDIR /work
 
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
-# Make sure the SHA256 checksum is set correctly for the .tar.bz2 tarball.
-ARG VER_QEMU=10.1.2
-ARG SUM_QEMU=519bcfd2a538ebfaedd2e43889144d511f79f7e582a915709686d9dd3a6914a0
+# Make sure the SHA256 checksum is set correctly for the .tar.xz tarball.
+ARG VER_QEMU=10.2.0-rc1
+ARG SUM_QEMU=b3359457a168bc8a21efc684522d52c50f13e4bf168c6bcea7ca7005af3d1130
 
 # Only x86_64 and aarch64 are currently supported.
 # We have no plans to support 32-bit architectures.
@@ -19,6 +19,11 @@ RUN test "$(uname -m)" = "x86_64" || test "$(uname -m)" = "aarch64" || \
 
 # Prevent apt-get from showing interactive prompts even with -y.
 ENV DEBIAN_FRONTEND=noninteractive
+
+# Optimize binaries for size and use linker optimization.
+ENV CFLAGS=-Os
+ENV CXXFLAGS=-Os
+ENV LDFLAGS=-Wl,-O1
 
 # Install dependencies from APT/DPKG.
 RUN apt-get update && apt-get -y install \
@@ -66,6 +71,7 @@ RUN apt-get update && apt-get -y install \
     libssh-dev \
     libslirp-dev \
     libsnappy-dev \
+    libunistring-dev \
     liburing-dev \
     libusb-1.0-0-dev \
     libusbredirparser-dev \
@@ -82,14 +88,33 @@ RUN apt-get update && apt-get -y install \
 # These are either missing from APT/DPKG, or the APT/DPKG version is too old.
 RUN pip3 install meson==1.9.1 pycotap==1.3.1 tomli==2.2.1
 
+# Build newer version of GNUTLS dependency, as APT version is too old.
+# Forcibly replace system-installed GNUTLS, because AppImageTool is buggy.
+# And we're running in a Docker container so who really cares?
+RUN curl --retry 10 --retry-delay 3 -fLO \
+    "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.11.tar.xz" && \
+    echo "90e337504031ef7d3077ab1a52ca8bac9b2f72bc454c95365a1cd1e0e81e06e9  gnutls-3.7.11.tar.xz" | sha256sum -c && \
+    mkdir -p gnutls && \
+    tar -xf gnutls-3.7.11.tar.xz -C gnutls --strip-components=1 && \
+    cd gnutls && \
+    ./configure \
+    --prefix=/usr \
+    --libdir=/usr/lib/$(uname -m)-linux-gnu \
+    --disable-doc \
+    --disable-rpath \
+    --disable-tests \
+    --enable-shared \
+    --with-default-trust-store-file=/etc/ssl/certs/ca-certificates.crt \
+    && make -j$(nproc) \
+    && make install
+
 # Download and extract the source.
-# Use .tar.bz2 archive instead of .tar.xz due to historical bugs.
 # Retry liberally to prevent a GitHub workflow fail if the server is buggy.
 RUN curl --retry 10 --retry-delay 3 -fLO \
-    "https://download.qemu.org/qemu-${VER_QEMU}.tar.bz2" && \
-    echo "${SUM_QEMU} qemu-${VER_QEMU}.tar.bz2" | sha256sum -c && \
+    "https://download.qemu.org/qemu-${VER_QEMU}.tar.xz" && \
+    echo "${SUM_QEMU} qemu-${VER_QEMU}.tar.xz" | sha256sum -c && \
     mkdir -p src pkg && \
-    tar -xf "qemu-${VER_QEMU}.tar.bz2" -C src --strip-components=1
+    tar -xf "qemu-${VER_QEMU}.tar.xz" -C src --strip-components=1
 
 # Compile QEMU and install it to the staging directory.
 RUN cd src && ./configure \

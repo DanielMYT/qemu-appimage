@@ -10,6 +10,7 @@ HERE="$(readlink -f "$(dirname "$0")")"
 export PATH="${HERE}/usr/bin:${PATH}"
 
 # Find the name of the program, and, if custom, verify its existence.
+EXE=""
 if test ! -z "${APPIMAGE_EXE}"; then
   if test -x "${HERE}/usr/bin/${APPIMAGE_EXE}"; then
     EXE="${HERE}/usr/bin/${APPIMAGE_EXE}"
@@ -20,7 +21,15 @@ if test ! -z "${APPIMAGE_EXE}"; then
     echo "ERROR: Program '${APPIMAGE_EXE}' not found in AppImage." >&2
     exit 1
   fi
-else
+elif test ! -z "${1}" && test -x "${HERE}/usr/bin/${1}"; then
+  # Multi-call format (qemu.AppImage qemu-img ...)
+  # This format shouldn't allow 'list', in case some program also uses that.
+  # APPIMAGE_EXE usage should also continue to override this, if set.
+  EXE="${HERE}/usr/bin/${1}"
+  # Shift arguments on account of first argument being program name.
+  shift
+fi
+if test -z "$EXE"; then
   # No custom program was set, so default to 'qemu-system-x86_64'.
   # It is expected behaviour for this to be the default even on non-x86_64.
   EXE="${HERE}/usr/bin/qemu-system-x86_64"

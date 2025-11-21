@@ -88,6 +88,22 @@ To see the full list of executables in the AppImage, set `APPIMAGE_EXE` to
 APPIMAGE_EXE=list ./qemu-X.Y.Z-x86_64.AppImage
 ```
 
+**NOTE:** Starting with version `10.2.0`, the AppImage supports accepting the
+first argument as the program name to run, instead of only supporting the
+`APPIMAGE_EXE` environment variable. The latter continues to be the default,
+but if unset, you can now run the AppImage as follows (for example):
+```
+./qemu-X.Y.Z-x86_64.AppImage qemu-img convert -f raw -O qcow2 example.img example.qcow2
+```
+
+All subsequent arguments will automatically be shifted as appropriate if the
+AppImage is run this way.
+
+If the first argument does not match the name of a program inside the AppImage,
+OR if `APPIMAGE_EXE` is set (which overrides this behaviour anyway), then the
+first argument will be passed as normal to the AppImage's default binary
+(`qemu-system-x86_64`).
+
 # Building
 The AppImage is built inside an isolated Docker container, so as to ensure that
 builds are not influenced in any way by the system they are built from, as well
