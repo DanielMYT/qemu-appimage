@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Docker for building x86_64 artifact
         uses: docker/setup-buildx-action@v3
@@ -23,7 +23,7 @@ jobs:
           tar -cf x86_64.tar artifact/
 
       - name: Upload artifact for x86_64 build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: x86_64.tar
           path: x86_64.tar
@@ -34,7 +34,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Docker for building aarch64 artifact
         uses: docker/setup-buildx-action@v3
@@ -45,7 +45,7 @@ jobs:
           tar -cf aarch64.tar artifact/
 
       - name: Upload artifact for aarch64 build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: aarch64.tar
           path: aarch64.tar
@@ -59,13 +59,13 @@ jobs:
 
     steps:
       - name: Download artifact for x86_64 build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: x86_64.tar
           path: .
 
       - name: Download artifact for aarch64 build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: aarch64.tar
           path: .
@@ -76,7 +76,7 @@ jobs:
           tar -xf aarch64.tar
 
       - name: Create release and upload both artifacts
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: QEMU ${{ github.ref_name }} AppImage
