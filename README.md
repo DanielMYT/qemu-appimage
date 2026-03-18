@@ -18,10 +18,10 @@ It should be noted that this project is **UNOFFICIAL**, and is not affiliated
 with or endorsed by the developers of QEMU in any way. As such, all bugs and
 issues with the AppImage should be reported to the developers of this project,
 **NOT** the upstream QEMU developers. You can report a bug using our
-[GitHub issue tracker](https://github.com/DanielMYT/qemu-appimage/issues).
-If it is later discovered that the issue exists in QEMU itself, and is not
-specific to this AppImage, then and only then may we forward the issue onto the
-QEMU developers.
+[GitHub issue tracker](https://github.com/DanielMYT/qemu-appimage/issues). The
+exception to this rule is if you can confirm the issue is reproducible on
+standard builds of QEMU. In which case, it is fine to take the issue straight
+to upstream.
 
 The AppImage is built under Debian 11, and should therefore be compatible with
 all reasonably modern distributions. Building on Ubuntu 20.04 is not possible
@@ -40,6 +40,18 @@ included in the AppImage, accessible by passing the `--appimage-extract`
 argument when running the AppImage file. The author(s) of the scripts in this
 repo make no additional claims of authorship or copyright over the software
 used by and/or produced from the scripts.
+
+# Download
+The destinations of the following links are automatically updated whenever a
+new release is published (they will always point to the newest build):
+
+| Build | Download |
+|-|-|
+| Latest x86_64 (x64, AMD64, EM64T) | [Link](https://go.dmassey.net/qemux64) |
+| Latest aarch64 (ARM64, ARMv8a) | [Link](https://go.dmassey.net/qemua64) |
+
+All releases, including older builds, can be found on the repository's
+[GitHub Releases Page](https://github.com/DanielMYT/qemu-appimage/releases).
 
 # Running
 **NOTE:** AppImages require FUSE version 2.x to run. Many modern distributions
