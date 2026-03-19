@@ -49,6 +49,8 @@ new release is published (they will always point to the newest build):
 |-|-|
 | Latest x86_64 (x64, AMD64, EM64T) | [Link](https://go.dmassey.net/qemux64) |
 | Latest aarch64 (ARM64, ARMv8a) | [Link](https://go.dmassey.net/qemua64) |
+| Pre-release (RC) x86_64 | [Link](https://go.dmassey.net/qemux64rc) |
+| Pre-release (RC) aarch64 | [Link](https://go.dmassey.net/qemua64rc) |
 
 All releases, including older builds, can be found on the repository's
 [GitHub Releases Page](https://github.com/DanielMYT/qemu-appimage/releases).

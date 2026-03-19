@@ -58,6 +58,14 @@ jobs:
       - buildarm
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install dependencies for release
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install curl jq
+
       - name: Download artifact for x86_64 build
         uses: actions/download-artifact@v5
         with:
@@ -81,8 +89,15 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: QEMU ${{ github.ref_name }} AppImage
           files: artifact/*
+          prerelease: ${{ contains(github.ref_name, '-rc') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update dynamic links to latest builds
+        env:
+          REBRANDLY_API_KEY: ${{ secrets.REBRANDLY }}
+        run: |
+          ./update-rb-links.sh "${{ github.ref_name }}"
 
       - name: Clean up artifact cache after release
         uses: geekyeggo/delete-artifact@v5
