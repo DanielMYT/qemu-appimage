@@ -8,8 +8,8 @@ WORKDIR /work
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
 # Make sure the SHA256 checksum is set correctly for the .tar.xz tarball.
-ARG VER_QEMU=10.2.2
-ARG SUM_QEMU=784b296ff29c1417aa72323abcb2d2ea9ab9771724f577dcd785c3b04f21e176
+ARG VER_QEMU=11.0.0-rc0
+ARG SUM_QEMU=36c6b20aba0dd9ae850246f323aac21b8947616f3b02fa5c051d6c806be689e8
 
 # Only x86_64 and aarch64 are currently supported.
 # We have no plans to support 32-bit architectures.
@@ -56,10 +56,12 @@ RUN apt-get update && apt-get -y install \
     libjpeg-dev \
     libjson-c-dev \
     libkeyutils-dev \
+    liblz4-dev \
     liblzo2-dev \
     libncurses-dev \
     libnfs-dev \
     libnuma-dev \
+    libopus-dev \
     libpmem-dev \
     librbd-dev \
     librdmacm-dev \
@@ -86,7 +88,7 @@ RUN apt-get update && apt-get -y install \
 
 # Install additional dependencies from PIP.
 # These are either missing from APT/DPKG, or the APT/DPKG version is too old.
-RUN pip3 install meson==1.9.1 pycotap==1.3.1 tomli==2.2.1
+RUN pip3 install meson==1.9.1 pycotap==1.3.1 pyparsing==3.3.2 tomli==2.2.1
 
 # Build newer version of GNUTLS dependency, as APT version is too old.
 # Forcibly replace system-installed GNUTLS, because AppImageTool is buggy.
@@ -107,6 +109,26 @@ RUN curl --retry 10 --retry-delay 3 -fLO \
     --with-default-trust-store-file=/etc/ssl/certs/ca-certificates.crt \
     && make -j$(nproc) \
     && make install
+
+# Build newer versions of spice-protocol and spice-server dependencies.
+# See notes above for GNUTLS.
+RUN curl --retry 10 --retry-delay 3 -fLO \
+    "https://www.spice-space.org/download/releases/spice-protocol-0.14.5.tar.xz" && \
+    curl --retry 10 --retry-delay 3 -fLO \
+    "https://www.spice-space.org/download/releases/spice-0.16.0.tar.bz2" && \
+    echo "baf58449f6e89d19f475899ad5fb9196fdc46c03cc53233f4e39cf2978f9cff7  spice-protocol-0.14.5.tar.xz" | sha256sum -c && \
+    echo "0a6ec9528f05371261bbb2d46ff35e7b5c45ff89bb975a99af95a5f20ff4717d  spice-0.16.0.tar.bz2" | sha256sum -c && \
+    mkdir -p spice-protocol spice-server && \
+    tar -xf spice-protocol-0.14.5.tar.xz -C spice-protocol --strip-components=1 && \
+    tar -xf spice-0.16.0.tar.bz2 -C spice-server --strip-components=1 && \
+    cd spice-protocol && \
+    meson setup build --prefix=/usr && \
+    ninja -C build && \
+    ninja -C build install && \
+    cd ../spice-server && \
+    meson setup build --prefix=/usr --buildtype=minsize -Dgstreamer=no && \
+    ninja -C build && \
+    ninja -C build install
 
 # Download and extract the source.
 # Retry liberally to prevent a GitHub workflow fail if the server is buggy.
