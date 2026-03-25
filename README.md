@@ -60,6 +60,9 @@ All releases, including older builds, can be found on the repository's
 don't include this by default, and it therefore may need to be installed
 manually. The official AppImage documentation has details about this. Please
 see [here](https://docs.appimage.org/user-guide/troubleshooting/fuse.html).
+Alternatively, if you can't install FUSE 2 for some reason, you could try to
+run the AppImage with the `--appimage-extract` argument, and then invoke the
+program with `./squashfs-root/AppRun`.
 
 The AppImage may be launched graphically from a desktop session, or via the
 command-line. To launch it graphically, you may need to first right-click the
