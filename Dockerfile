@@ -8,8 +8,8 @@ WORKDIR /work
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
 # Make sure the SHA256 checksum is set correctly for the .tar.xz tarball.
-ARG VER_QEMU=11.0.0-rc4
-ARG SUM_QEMU=fee811672030ac25667f47185f363b5f59539a45c62c26598534e58ccca5a763
+ARG VER_QEMU=11.0.0
+ARG SUM_QEMU=c04ca36012653f32d11c674d370cf52a710e7d3f18c2d8b63e4932052a4854d6
 
 # Only x86_64 and aarch64 are currently supported.
 # We have no plans to support 32-bit architectures.
@@ -93,7 +93,7 @@ RUN pip3 install meson==1.9.1 pycotap==1.3.1 pyparsing==3.3.2 tomli==2.2.1
 # Build newer version of GNUTLS dependency, as APT version is too old.
 # Forcibly replace system-installed GNUTLS, because AppImageTool is buggy.
 # And we're running in a Docker container so who really cares?
-RUN curl --retry 10 --retry-delay 3 -fLO \
+RUN curl --retry 10 --retry-delay 3 -fkLO \
     "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.7/gnutls-3.7.11.tar.xz" && \
     echo "90e337504031ef7d3077ab1a52ca8bac9b2f72bc454c95365a1cd1e0e81e06e9  gnutls-3.7.11.tar.xz" | sha256sum -c && \
     mkdir -p gnutls && \
@@ -112,9 +112,9 @@ RUN curl --retry 10 --retry-delay 3 -fLO \
 
 # Build newer versions of spice-protocol and spice-server dependencies.
 # See notes above for GNUTLS.
-RUN curl --retry 10 --retry-delay 3 -fLO \
+RUN curl --retry 10 --retry-delay 3 -fkLO \
     "https://www.spice-space.org/download/releases/spice-protocol-0.14.5.tar.xz" && \
-    curl --retry 10 --retry-delay 3 -fLO \
+    curl --retry 10 --retry-delay 3 -fkLO \
     "https://www.spice-space.org/download/releases/spice-0.16.0.tar.bz2" && \
     echo "baf58449f6e89d19f475899ad5fb9196fdc46c03cc53233f4e39cf2978f9cff7  spice-protocol-0.14.5.tar.xz" | sha256sum -c && \
     echo "0a6ec9528f05371261bbb2d46ff35e7b5c45ff89bb975a99af95a5f20ff4717d  spice-0.16.0.tar.bz2" | sha256sum -c && \
@@ -132,7 +132,7 @@ RUN curl --retry 10 --retry-delay 3 -fLO \
 
 # Download and extract the source.
 # Retry liberally to prevent a GitHub workflow fail if the server is buggy.
-RUN curl --retry 10 --retry-delay 3 -fLO \
+RUN curl --retry 10 --retry-delay 3 -fkLO \
     "https://download.qemu.org/qemu-${VER_QEMU}.tar.xz" && \
     echo "${SUM_QEMU} qemu-${VER_QEMU}.tar.xz" | sha256sum -c && \
     mkdir -p src pkg && \
@@ -306,8 +306,8 @@ COPY AppRun ./pkg/
 
 # Download and run linuxdeploy to build the AppImage.
 RUN export LDAI_OUTPUT="qemu-${VER_QEMU}-$(uname -m).AppImage" && cd pkg && \
-    curl -fLO "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-$(uname -m).AppImage" && \
-    curl -fLO "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh" && \
+    curl -fkLO "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-$(uname -m).AppImage" && \
+    curl -fkLO "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh" && \
     chmod 755 "linuxdeploy-$(uname -m).AppImage" linuxdeploy-plugin-gtk.sh && \
     "./linuxdeploy-$(uname -m).AppImage" --appimage-extract && \
     squashfs-root/usr/bin/linuxdeploy \
