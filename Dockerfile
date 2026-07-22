@@ -8,8 +8,8 @@ WORKDIR /work
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
 # Make sure the SHA256 checksum is set correctly for the .tar.xz tarball.
-ARG VER_QEMU=11.0.2
-ARG SUM_QEMU=3745f6ea88e2e87fe0dc838b2b1d4e0a770bf48e01a1d5a186842a1fff76ccf5
+ARG VER_QEMU=11.1.0-rc1
+ARG SUM_QEMU=8d3aae3cc7ce58916cbc3cf7891958e47f82ab7a1c239b9be333f892d1ae3f34
 
 # Only x86_64 and aarch64 are currently supported.
 # We have no plans to support 32-bit architectures.
@@ -30,6 +30,7 @@ RUN apt-get update && apt-get -y install \
     bash-completion \
     bison \
     build-essential \
+    clang-19 \
     curl \
     file \
     flex \
@@ -142,6 +143,10 @@ RUN curl --retry 10 --retry-delay 3 -fkLO \
 RUN cd src && ./configure \
     --prefix=/usr \
     --libdir=lib \
+    --cc=clang-19 \
+    --cxx=clang++-19 \
+    --extra-cflags="-DMADV_POPULATE_READ=22 -DMADV_POPULATE_WRITE=23" \
+    --extra-cxxflags="-DMADV_POPULATE_READ=22 -DMADV_POPULATE_WRITE=23" \
     --disable-af-xdp \
     --enable-alsa \
     --enable-attr \
@@ -171,10 +176,8 @@ RUN cd src && ./configure \
     --disable-gcrypt \
     --enable-gettext \
     --enable-gio \
-    --enable-glusterfs \
     --enable-gnutls \
     --enable-gtk \
-    --disable-gtk-clipboard \
     --enable-guest-agent \
     --disable-guest-agent-msi \
     --disable-hv-balloon \
