@@ -24,17 +24,15 @@ standard builds of QEMU. In which case, it is fine to take the issue straight
 to upstream.
 
 The AppImage is built under Debian 11, and should therefore be compatible with
-all reasonably modern distributions. Building on Ubuntu 20.04 is not possible
-(at least without unconventional and complex workarounds), due to the fact that
-the software it provides is too outdated. By contrast, building the AppImage
-under Ubuntu 22.04 would have the possibility of alienating some older distros,
-because it's still fairly recent (at the time of writing). Therefore, the
-decision was made to use Debian 11, which can be thought of as essentially
-in-between Ubuntu 20.04 and Ubuntu 22.04. It should be noted, however, that
-this may change in the future.
+all reasonably modern distributions running Glibc 2.31 or up. Building on older
+distributions is not possible due to lack of upstream support by the QEMU
+developers for older library versions and compilers, and would require too many
+hacky workarounds to get working. Debian 11 is therefore the oldest possible
+still-supported distro that can sensibly be used for building this AppImage.
+Debian 11 can be thought of as a middle-ground between Ubuntu 20.04 and 22.04.
 
 The build scripts in this repository are [MIT licensed](LICENSE). The output
-binaries produced by the script are licensed under the same license terms as
+binaries produced by the script are covered under the same license terms as
 QEMU itself. All relevant license files from the QEMU source tree will be
 included in the AppImage, accessible by passing the `--appimage-extract`
 argument when running the AppImage file. The author(s) of the scripts in this
@@ -48,7 +46,7 @@ new release is published (they will always point to the newest build):
 | Build | Download |
 |-|-|
 | Latest x86_64 (x64, AMD64, EM64T) | [Link](https://go.dmassey.net/qemux64) |
-| Latest aarch64 (ARM64, ARMv8a) | [Link](https://go.dmassey.net/qemua64) |
+| Latest aarch64 (ARM64, ARMv8) | [Link](https://go.dmassey.net/qemua64) |
 | Pre-release (RC) x86_64 | [Link](https://go.dmassey.net/qemux64rc) |
 | Pre-release (RC) aarch64 | [Link](https://go.dmassey.net/qemua64rc) |
 
