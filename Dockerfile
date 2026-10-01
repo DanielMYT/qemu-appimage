@@ -27,11 +27,7 @@ ENV LDFLAGS=-Wl,-O1
 
 # Run workaround for Debian 11, which is now EOL.
 # This is temporary, until the QEMU AppImage is migrated to Ubuntu 22.04.
-RUN cat > /etc/apt/sources.list << "END"
-deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260831T204404Z bullseye main
-deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20260831T211327Z bullseye-security main
-deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260831T204404Z bullseye-updates main
-END
+RUN printf 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260831T204404Z bullseye main\ndeb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20260831T211327Z bullseye-security main\ndeb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260831T204404Z bullseye-updates main\n' > /etc/apt/sources.list
 
 # Install dependencies from APT/DPKG.
 RUN apt-get update && apt-get -y install \
