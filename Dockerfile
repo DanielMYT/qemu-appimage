@@ -8,8 +8,8 @@ WORKDIR /work
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
 # Make sure the SHA256 checksum is set correctly for the .tar.xz tarball.
-ARG VER_QEMU=11.1.1
-ARG SUM_QEMU=079ffbff8a7111bbc89022107cbabf3bbfd614d5fc9d7cc675991196aca12482
+ARG VER_QEMU=11.1.2
+ARG SUM_QEMU=731b5681e4bb18be313231579b8efd0296c5b015fa36dc533874b639ba838016
 
 # Only x86_64 and aarch64 are currently supported.
 # We have no plans to support 32-bit architectures.
@@ -24,6 +24,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV CFLAGS=-Os
 ENV CXXFLAGS=-Os
 ENV LDFLAGS=-Wl,-O1
+
+# Run workaround for Debian 11, which is now EOL.
+# This is temporary, until the QEMU AppImage is migrated to Ubuntu 22.04.
+RUN cat > /etc/apt/sources.list << "END"
+deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260831T204404Z bullseye main
+deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20260831T211327Z bullseye-security main
+deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260831T204404Z bullseye-updates main
+END
 
 # Install dependencies from APT/DPKG.
 RUN apt-get update && apt-get -y install \
