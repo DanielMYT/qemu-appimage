@@ -8,8 +8,8 @@ WORKDIR /work
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
 # Make sure the SHA256 checksum is set correctly for the .tar.xz tarball.
-ARG VER_QEMU=11.1.2
-ARG SUM_QEMU=731b5681e4bb18be313231579b8efd0296c5b015fa36dc533874b639ba838016
+ARG VER_QEMU=11.1.3
+ARG SUM_QEMU=5a8289c7940dc77d3873c81a6c29ba3afe1446fc9d36e77fa1658cdbecb84b22
 
 # Only x86_64 and aarch64 are currently supported.
 # We have no plans to support 32-bit architectures.
