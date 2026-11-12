@@ -31,6 +31,16 @@ hacky workarounds to get working. Debian 11 is therefore the oldest possible
 still-supported distro that can sensibly be used for building this AppImage.
 Debian 11 can be thought of as a middle-ground between Ubuntu 20.04 and 22.04.
 
+**NOTE:** The build distro for the AppImages will be switched to Rocky Linux 9
+starting from QEMU version **11.2.x**. This will raise the minimum host Glibc
+version to 2.34 (previously 2.31 with Debian 11). The AppImage will remain
+compatible with most distributions released in 2022 or later, including Ubuntu
+22.04 and RHEL 9. This change does NOT apply to the current stable version at
+the time of writing (**11.1.x**), nor older versions. The change was made due
+to (a) Debian 11 reaching end-of-life status and thus no longer receiving
+security updates, as well as (b) the upstream QEMU project dropping
+compatibility with older library versions and compilers.
+
 The build scripts in this repository are [MIT licensed](LICENSE). The output
 binaries produced by the script are covered under the same license terms as
 QEMU itself. All relevant license files from the QEMU source tree will be
@@ -38,6 +48,11 @@ included in the AppImage, accessible by passing the `--appimage-extract`
 argument when running the AppImage file. The author(s) of the scripts in this
 repo make no additional claims of authorship or copyright over the software
 used by and/or produced from the scripts.
+
+The license file(s) of third party dynamic libraries bundled into the AppImage
+can be found at `usr/share/doc/*/copyright` after extracting the AppImage with
+the aforementioned argument. They will be installed corresponding to their DPKG
+or RPM package names (depending upon which distro the AppImage was built on).
 
 # Download
 The destinations of the following links are automatically updated whenever a
