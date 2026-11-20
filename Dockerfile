@@ -7,8 +7,8 @@ WORKDIR /work
 # Be careful when updating the version of QEMU.
 # It may require modification of the build arguments below.
 # Make sure the SHA256 checksum is set correctly for the .tar.xz tarball.
-ARG VER_QEMU=11.2.0-rc0
-ARG SUM_QEMU=1055588c7acb8b083ca69c3f8625ca240de823e6a34b02b16fa8cabeb1be49be
+ARG VER_QEMU=11.2.0-rc1
+ARG SUM_QEMU=afa61391ade2f05f0b93a7510d736d22e54f74b91fd2c47d286640d595343870
 
 # Only x86_64 and aarch64 are currently supported.
 # We have no plans to support 32-bit architectures.
@@ -49,7 +49,6 @@ RUN dnf -y update && dnf -y install dnf-plugins-core epel-release && \
     glib2-devel \
     gnutls-devel \
     gtk3-devel \
-    jack-audio-connection-kit-devel \
     json-c-devel \
     keyutils-libs-devel \
     libaio-devel \
@@ -84,7 +83,6 @@ RUN dnf -y update && dnf -y install dnf-plugins-core epel-release && \
     openssl-devel \
     opus-devel \
     patchelf \
-    pipewire-devel \
     pkgconf-pkg-config \
     pulseaudio-libs-devel \
     python3.12-pip \
@@ -217,7 +215,7 @@ RUN source /opt/rh/gcc-toolset-14/enable && cd src && ./configure \
     --disable-hvf \
     --enable-iconv \
     --disable-igvm \
-    --enable-jack \
+    --disable-jack \
     --enable-keyring \
     --enable-kvm \
     --enable-l2tpv3 \
@@ -251,7 +249,7 @@ RUN source /opt/rh/gcc-toolset-14/enable && cd src && ./configure \
     --enable-pa \
     --enable-parallels \
     --enable-pie \
-    --enable-pipewire \
+    --disable-pipewire \
     --enable-pixman \
     --enable-plugins \
     --enable-png \
